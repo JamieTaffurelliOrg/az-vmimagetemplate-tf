@@ -1,0 +1,144 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "outputs": {
+    "resourceID": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.VirtualMachineImages/imageTemplates', parameters('imageTemplateName'))).id]"
+    }
+  },
+  "parameters": {
+    "artifactTags": {
+      "type": "Object"
+    },
+    "buildTimeoutInMinutes": {
+      "defaultValue": 300,
+      "type": "Int"
+    },
+    "galleryImageId": {
+      "type": "String"
+    },
+    "hardeningScriptUrl": {
+      "type": "String"
+    },
+    "imageTemplateName": {
+      "type": "String"
+    },
+    "location": {
+      "type": "String"
+    },
+    "osDiskSizeGB": {
+      "defaultValue": 0,
+      "type": "Int"
+    },
+    "sourceImageOffer": {
+      "type": "String"
+    },
+    "sourceImagePublisher": {
+      "type": "String"
+    },
+    "sourceImageSku": {
+      "type": "String"
+    },
+    "storageAccountType": {
+      "defaultValue": "Standard_ZRS",
+      "type": "String"
+    },
+    "tags": {
+      "type": "Object"
+    },
+    "userAssignedIdentityId": {
+      "type": "String"
+    },
+    "vmSize": {
+      "defaultValue": "Standard_D2s_v4",
+      "type": "String"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-02-14",
+      "identity": {
+        "type": "UserAssigned",
+        "userAssignedIdentities": {
+          "[parameters('userAssignedIdentityId')]": {}
+        }
+      },
+      "location": "[parameters('location')]",
+      "name": "[parameters('imageTemplateName')]",
+      "properties": {
+        "buildTimeoutInMinutes": "[parameters('buildTimeoutInMinutes')]",
+        "customize": [
+          {
+            "filters": [
+              "exclude:$_.Title -like '*Preview*'",
+              "include:$true"
+            ],
+            "searchCriteria": "IsInstalled=0",
+            "type": "WindowsUpdate",
+            "updateLimit": 1000
+          },
+          {
+            "restartCheckCommand": "echo Azure-Image-Builder-Restarted-the-VM  > c:\\image-builder\\azureImageBuilderRestart.txt",
+            "restartTimeout": "60m",
+            "type": "WindowsRestart"
+          },
+          {
+            "inline": [
+              "New-Item -Path HKLM:\\Software\\Microsoft\\DesiredStateConfiguration; New-ItemProperty -Path HKLM:\\Software\\Microsoft\\DesiredStateConfiguration -Name 'AgentId' -PropertyType STRING -Force"
+            ],
+            "name": "SetDSCKey",
+            "runElevated": true,
+            "type": "PowerShell"
+          },
+          {
+            "inline": [
+              "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))"
+            ],
+            "name": "InstallChoco",
+            "runElevated": true,
+            "type": "PowerShell"
+          },
+          {
+            "inline": [
+              "choco install 7zip az.powershell azure-cli awscli treesizefree notepadplusplus -y"
+            ],
+            "name": "InstallChocoPackages",
+            "runElevated": true,
+            "type": "PowerShell"
+          },
+          {
+            "name": "ServerHardening",
+            "runElevated": true,
+            "scriptUri": "[parameters('hardeningScriptUrl')]",
+            "type": "PowerShell"
+          }
+        ],
+        "distribute": [
+          {
+            "artifactTags": "[parameters('artifactTags')]",
+            "galleryImageId": "[parameters('galleryImageId')]",
+            "replicationRegions": "[parameters('location')]",
+            "runOutputName": "[parameters('imageTemplateName')]",
+            "storageAccountType": "[parameters('storageAccountType')]",
+            "type": "SharedImage"
+          }
+        ],
+        "source": {
+          "offer": "[parameters('sourceImageOffer')]",
+          "publisher": "[parameters('sourceImagePublisher')]",
+          "sku": "[parameters('sourceImageSku')]",
+          "type": "PlatformImage",
+          "version": "latest"
+        },
+        "vmProfile": {
+          "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
+          "vmSize": "[parameters('vmSize')]"
+        }
+      },
+      "tags": "[parameters('tags')]",
+      "type": "Microsoft.VirtualMachineImages/imageTemplates"
+    }
+  ],
+  "variables": {}
+}

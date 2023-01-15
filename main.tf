@@ -14,16 +14,16 @@ resource "azurerm_resource_group_template_deployment" "windows_image_template" {
       value = data.azurerm_user_assigned_identity.image.id
     },
     "galleryImageId" = {
-      value = data.azurerm_shared_image.image[(each.value["${each.key}-${each.value.image_name}"])].id
+      value = data.azurerm_shared_image.image["${each.key}-${each.value.image_name}"].id
     },
     "sourceImagePublisher" = {
-      value = data.azurerm_shared_image.image[(each.value["${each.key}-${each.value.image_name}"])].publisher
+      value = data.azurerm_shared_image.image["${each.key}-${each.value.image_name}"].identifier[0].publisher
     },
     "sourceImageOffer" = {
-      value = data.azurerm_shared_image.image[(each.value["${each.key}-${each.value.image_name}"])].offer
+      value = data.azurerm_shared_image.image["${each.key}-${each.value.image_name}"].identifier[0].offer
     },
     "sourceImageSku" = {
-      value = data.azurerm_shared_image.image[(each.value["${each.key}-${each.value.image_name}"])].sku
+      value = data.azurerm_shared_image.image["${each.key}-${each.value.image_name}"].identifier[0].sku
     },
     "artifactTags" = {
       value = each.value["artifact_tags"]

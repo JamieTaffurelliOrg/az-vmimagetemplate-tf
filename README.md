@@ -38,7 +38,5 @@ No modules.
 
 ## Outputs
 
-| Name | Description |
-|------|-------------|
-| <a name="output_windows_image_template_resource_id"></a> [windows\_image\_template\_resource\_id](#output\_windows\_image\_template\_resource\_id) | Resource ID of the image template |
+No outputs.
 <!-- END_TF_DOCS -->

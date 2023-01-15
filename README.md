@@ -34,7 +34,7 @@ No modules.
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Name of the Resource Group to deploy to | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to resources | `map(string)` | n/a | yes |
 | <a name="input_user_assigned_identity_name"></a> [user\_assigned\_identity\_name](#input\_user\_assigned\_identity\_name) | Name of user assigned identity for image builder | `string` | n/a | yes |
-| <a name="input_windows_image_templates"></a> [windows\_image\_templates](#input\_windows\_image\_templates) | Windows image templates to deploy | <pre>list(object({<br>    name                 = string<br>    image_name           = string<br>    artifact_tags        = list(string)<br>    hardening_script_url = string<br>  }))</pre> | n/a | yes |
+| <a name="input_windows_image_templates"></a> [windows\_image\_templates](#input\_windows\_image\_templates) | Windows image templates to deploy | <pre>list(object({<br>    name                 = string<br>    image_name           = string<br>    artifact_tags        = map(string)<br>    hardening_script_url = string<br>  }))</pre> | n/a | yes |
 
 ## Outputs
 

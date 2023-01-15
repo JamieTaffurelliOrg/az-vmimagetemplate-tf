@@ -22,7 +22,7 @@ variable "windows_image_templates" {
   type = list(object({
     name                 = string
     image_name           = string
-    artifact_tags        = list(string)
+    artifact_tags        = map(string)
     hardening_script_url = string
   }))
   description = "Windows image templates to deploy"

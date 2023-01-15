@@ -118,7 +118,9 @@
           {
             "artifactTags": "[parameters('artifactTags')]",
             "galleryImageId": "[parameters('galleryImageId')]",
-            "replicationRegions": "[parameters('location')]",
+            "replicationRegions": [
+              "[parameters('location')]"
+            ],
             "runOutputName": "[parameters('imageTemplateName')]",
             "storageAccountType": "[parameters('storageAccountType')]",
             "type": "SharedImage"

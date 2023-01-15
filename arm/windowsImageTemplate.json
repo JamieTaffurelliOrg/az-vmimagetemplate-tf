@@ -51,7 +51,7 @@
       "type": "String"
     },
     "vmSize": {
-      "defaultValue": "Standard_D2s_v4",
+      "defaultValue": "Standard_D2_v2",
       "type": "String"
     }
   },
